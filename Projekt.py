@@ -113,11 +113,11 @@ try:
                         number = 0
                         if '%C5%81TSG_%C5%81%C3%B3d%C5%BA' in link2:
                             number = 1908
-                        elif 'Lechia/Olimpia_Gda%C5%84sk' in link2:
+                        elif 'Lechia_Gda%C5%84sk_(pi%C5%82ka_no%C5%BCna)' in link2:
                             number = 1995
                         else:
                             req = requests.get(link2)
-                            store = etree.fromstring(req.text)
+                            store = etree.HTML(req.text)
                             output = store.xpath(
                                 '//table[@class="infobox"]/tbody/tr[td[1]/text()="Data\xa0założenia\n"]/td[2]')
                             try:
