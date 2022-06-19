@@ -3,25 +3,25 @@ from bs4 import BeautifulSoup
 from lxml import etree
 
 
-def filtruj(kolumna, od, do):
+def filter(column, from_value, to_value):
     x = 0
     for row in rows:
         if 0 < x < len(rows) - 1:
-            tekst = row.findAll('td')[kolumna].text
-            list = [int(s) for s in tekst.split() if s.isdigit()]
+            text_from_table = row.findAll('td')[column].text
+            list = [int(s) for s in text_from_table.split() if s.isdigit()]
             number = int(list[0])
-            if od <= number <= do:
-                print(nazwy_klubow[x - 1])
+            if from_value <= number <= to_value:
+                print(club_names[x - 1])
         x = x + 1
 
 
-def filtrujOstatniaKolumne(od, do):
+def filterLastColumn(from_value, to_value):
     x = 0
     for row in rows:
         if 0 < x < len(rows) - 2:
             number = int(row.findAll('td')[15].text[:-2])
-            if od <= number <= do:
-                print(nazwy_klubow[x - 1])
+            if from_value <= number <= to_value:
+                print(club_names[x - 1])
         x = x + 1
 
 
@@ -38,11 +38,11 @@ try:
     rows = main_table.findAll('tr')
 
     i = 0
-    nazwy_klubow = []
+    club_names = []
     for row in rows:
         if i > 0:
-            nazwa_klubu = row.findAll('td')[1].text[:-1]
-            nazwy_klubow.append(nazwa_klubu)
+            club_name = row.findAll('td')[1].text[:-1]
+            club_names.append(club_name)
         i = i + 1
 
     print('')
@@ -60,50 +60,50 @@ try:
     print('10 - najwyższa pozycja w lidze')
     print('11 - rok założenia klubu')
 
-    kryterium = input()
+    option = input()
 
     print('Podaj liczbowy zakres:')
 
     print('Od:')
-    od = int(input())
+    from_value = int(input())
     print('Do:')
-    do = int(input())
-    if do < od:
+    to_value = int(input())
+    if to_value < from_value:
         print('Liczba DO nie może być mniejsza niż liczba OD!!!')
     else:
         print('')
         print('Przetwarzanie zapytania...')
         print('')
-        if kryterium == '1':
-            kolumna = 2
-            filtruj(kolumna, od, do)
-        elif kryterium == '2':
-            kolumna = 3
-            filtruj(kolumna, od, do)
-        elif kryterium == '3':
-            kolumna = 4
-            filtruj(kolumna, od, do)
-        elif kryterium == '4':
-            kolumna = 5
-            filtruj(kolumna, od, do)
-        elif kryterium == '5':
-            kolumna = 6
-            filtruj(kolumna, od, do)
-        elif kryterium == '6':
-            kolumna = 8
-            filtruj(kolumna, od, do)
-        elif kryterium == '7':
-            kolumna = 9
-            filtruj(kolumna, od, do)
-        elif kryterium == '8':
-            kolumna = 11
-            filtruj(kolumna, od, do)
-        elif kryterium == '9':
-            kolumna = 12
-            filtruj(kolumna, od, do)
-        elif kryterium == '10':
-            filtrujOstatniaKolumne(od, do)
-        elif kryterium == '11':
+        if option == '1':
+            column = 2
+            filter(column, from_value, to_value)
+        elif option == '2':
+            column = 3
+            filter(column, from_value, to_value)
+        elif option == '3':
+            column = 4
+            filter(column, from_value, to_value)
+        elif option == '4':
+            column = 5
+            filter(column, from_value, to_value)
+        elif option == '5':
+            column = 6
+            filter(column, from_value, to_value)
+        elif option == '6':
+            column = 8
+            filter(column, from_value, to_value)
+        elif option == '7':
+            column = 9
+            filter(column, from_value, to_value)
+        elif option == '8':
+            column = 11
+            filter(column, from_value, to_value)
+        elif option == '9':
+            column = 12
+            filter(column, from_value, to_value)
+        elif option == '10':
+            filterLastColumn(from_value, to_value)
+        elif option == '11':
             links = main_table.findAll('a')
             id = 0
             for link in links:
@@ -121,38 +121,38 @@ try:
                             output = store.xpath(
                                 '//table[@class="infobox"]/tbody/tr[td[1]/text()="Data\xa0założenia\n"]/td[2]')
                             try:
-                                rok_surowy = output[0].text
-                                if rok_surowy is None:
+                                year_text = output[0].text
+                                if year_text is None:
                                     output = store.xpath(
                                         '//table[@class="infobox"]/tbody/tr[td[1]/text()="Data\xa0założenia\n"]/td[2]/a[last()]')
-                                    rok_surowy = output[0].text
-                                    if len(rok_surowy) == 11:
-                                        rok_surowy = rok_surowy[-5:]
-                                    list = [int(s) for s in rok_surowy.split() if s.isdigit()]
+                                    year_text = output[0].text
+                                    if len(year_text) == 11:
+                                        year_text = year_text[-5:]
+                                    list = [int(s) for s in year_text.split() if s.isdigit()]
                                     number = int(list[0])
                                 else:
-                                    if len(rok_surowy) == 11:
-                                        rok_surowy = rok_surowy[-5:]
+                                    if len(year_text) == 11:
+                                        year_text = year_text[-5:]
                                     try:
-                                        list = [int(s) for s in rok_surowy.split() if s.isdigit()]
+                                        list = [int(s) for s in year_text.split() if s.isdigit()]
                                         number = int(list[-1])
                                     except Exception as err:
                                         output = store.xpath(
                                             '//table[@class="infobox"]/tbody/tr[td[1]/text()="Data\xa0założenia\n"]/td[2]/a')
-                                        rok_surowy = output[0].text
-                                        list = [int(s) for s in rok_surowy.split() if s.isdigit()]
+                                        year_text = output[0].text
+                                        list = [int(s) for s in year_text.split() if s.isdigit()]
                                         number = int(list[-1])
                             except Exception as err:
                                 output = store.xpath(
                                     '//table[@class="infobox"]/tbody/tr[td[1]/text()="Data założenia\n"]/td[2]')
                                 try:
-                                    rok_surowy = output[0].text
-                                    list = [int(s) for s in rok_surowy.split() if s.isdigit()]
+                                    year_text = output[0].text
+                                    list = [int(s) for s in year_text.split() if s.isdigit()]
                                     number = int(list[0])
                                 except Exception as err:
                                     pass
-                        if od <= number <= do:
-                            print(nazwy_klubow[id])
+                        if from_value <= number <= to_value:
+                            print(club_names[id])
                         id = id + 1
                 except Exception as err2:
                     continue
